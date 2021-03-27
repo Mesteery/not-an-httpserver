@@ -1,0 +1,35 @@
+{
+	"name": "not-an-httpserver",
+	"description": "A simple implementation of an http/1.0 server",
+	"version": "0.0.0",
+	"main": "build/index.js",
+	"prettier": "@typescord/prettier-config",
+	"scripts": {
+		"build": "rimraf build && tsc -p tsconfig.json",
+		"mrm": "mrm --preset=@typescord/mrm-preset",
+		"lint": "eslint . --ext ts",
+		"lint-fix": "yarn lint --fix",
+		"format": "prettier . --write"
+	},
+	"author": "mestery",
+	"devDependencies": {
+		"@types/node": "^14.14.37",
+		"@typescord/eslint-config": "^0.2.0",
+		"@typescord/mrm-preset": "^2.1.0",
+		"@typescord/prettier-config": "^0.1.2",
+		"@typescript-eslint/eslint-plugin": "^4.19.0",
+		"@typescript-eslint/parser": "^4.19.0",
+		"eslint": "^7.23.0",
+		"eslint-config-prettier": "^7.2.0",
+		"eslint-import-resolver-node": "^0.3.4",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-prettier": "^3.3.1",
+		"eslint-plugin-simple-import-sort": "^7.0.0",
+		"eslint-plugin-sonarjs": "^0.6.0",
+		"eslint-plugin-unicorn": "^29.0.0",
+		"mrm": "^2.6.1",
+		"prettier": "^2.2.1",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.2.3"
+	}
+}
