@@ -93,7 +93,7 @@ export class Server extends TcpServer {
 					return;
 				}
 
-				const colonIndex = header.indexOf(':');
+				const colonIndex = header.indexOf(': ');
 				if (colonIndex < 1) {
 					socket.write(badRequestResponse);
 					socket.destroy();
