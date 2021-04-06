@@ -75,7 +75,7 @@ export class Server extends TcpServer {
 		}
 
 		const requestHeadEnd = data.indexOf(CRLF + CRLF);
-		const rawHeaders: Record<string, string | number> = {};
+		const rawHeaders: Record<string, string> = {};
 
 		let body: Buffer | undefined;
 		if (requestHeadEnd > firstCrlf) {
@@ -104,27 +104,28 @@ export class Server extends TcpServer {
 			}
 
 			const bodyStart = requestHeadEnd + CRLF.length * 2;
-			const bodyLength = data.length - bodyStart;
+			if (bodyStart < data.length) {
+				const bodyLength = data.length - bodyStart;
 
-			const contentLength = rawHeaders['content-length'] as string;
-			if (contentLength) {
-				const parsedLength = parseInt(contentLength, 10);
-				if (isNaN(parsedLength) || parsedLength < 0 || parsedLength > bodyLength) {
-					socket.write(badRequestResponse);
-					socket.destroy();
-					return;
+				const contentLength = rawHeaders['content-length'];
+				if (contentLength) {
+					const parsedLength = parseInt(contentLength, 10);
+					if (isNaN(parsedLength) || parsedLength < 0 || parsedLength > bodyLength) {
+						socket.write(badRequestResponse);
+						socket.destroy();
+						return;
+					}
+
+					body = parsedLength === 0 ? undefined : data.slice(bodyStart, bodyStart + parsedLength);
+				} else {
+					body = bodyLength === 0 ? undefined : data.slice(bodyStart);
 				}
-
-				rawHeaders['content-length'] = parsedLength;
-				body = parsedLength === 0 ? undefined : data.slice(bodyStart, bodyStart + parsedLength);
-			} else {
-				body = bodyLength === 0 ? undefined : data.slice(bodyStart);
 			}
 		}
 
 		let url: Url;
 		try {
-			url = createUrl(requestLine[1], rawHeaders.host as string);
+			url = createUrl(requestLine[1], rawHeaders.host);
 		} catch {
 			socket.write(badRequestResponse);
 			socket.destroy();
@@ -137,7 +138,7 @@ export class Server extends TcpServer {
 			httpVersion: requestLine[2] as RequestOptions['httpVersion'],
 			rawHeaders,
 			body,
-			charset: parseContentTypeCharset(rawHeaders['content-type'] as string),
+			charset: parseContentTypeCharset(rawHeaders['content-type']),
 		});
 		response = new Response(socket);
 
